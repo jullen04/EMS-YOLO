@@ -1,0 +1,8 @@
+"__pycache__/" 
+"*.pyc" 
+"runs/" 
+"thesis_figures/" 
+"thesis_figures_v2/" 
+"train_stdout.txt" 
+"train_stderr.txt" 
+"data/images/" 
