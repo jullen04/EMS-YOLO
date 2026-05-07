@@ -16,6 +16,7 @@ from threading import Thread
 import numpy as np
 import torch
 from tqdm import tqdm
+import yaml
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # root directory
@@ -144,7 +145,23 @@ def run(data,
 
         # Data
         #data = check_dataset(data)  # check
-
+        if isinstance(data, str):
+            with open(data, errors='ignore') as f:
+                data = yaml.safe_load(f)
+        
+        if dataloader is None:
+            task = task if task in ('train', 'val', 'test') else 'val'
+            val_path = data[task]
+            dataloader = create_dataloader(
+                path=val_path, 
+                sample_size=250000, # Byt ut till din exakta sample_size om den är annorlunda
+                T=T, 
+                image_shape=(480, 640), # Din CARLA-upplösning
+                mode=task, 
+                batch_size=batch_size, 
+                stride=stride
+            )[0]
+            
     # Configure
     model.eval()
     is_coco = False
@@ -157,7 +174,7 @@ def run(data,
     if not training:
         print('val  not training model has been used')
         if pt and device.type != 'cpu':
-            model(torch.zeros(1, 3, imgsz, imgsz).to(device).type_as(next(model.model.parameters())))  # warmup
+            model(torch.zeros(1, T, 3, imgsz, imgsz).to(device).type_as(next(model.model.parameters())))  # warmup
         pad = 0.0 if task == 'speed' else 0.5
         task = task if task in ('train', 'val', 'test') else 'val'  # path to train/val/test images
     seen = 0
@@ -239,9 +256,9 @@ def run(data,
             #    save_one_json(predn, jdict, path, class_map)  # append to COCO-JSON dictionary
             #callbacks.run('on_val_image_end', pred, predn, path, names, im[si])
         # Plot images
-        if plots and batch_i < 0:
+        if plots and batch_i < 3:
             f = save_dir / f'val_batch{batch_i}_labels.jpg'  # labels
-            Thread(target=plot_images, aargs=(im[:,timewindow-1,:,:,:], targets, paths, f, names), daemon=True).start()
+            Thread(target=plot_images, args=(im[:,timewindow-1,:,:,:], targets, paths, f, names), daemon=True).start()
             f = save_dir / f'val_batch{batch_i}_pred.jpg'  # predictions
             Thread(target=plot_images, args=(im[:,timewindow-1,:,:,:], output_to_target(out), paths, f, names), daemon=True).start()
     # Compute metrics
@@ -266,7 +283,7 @@ def run(data,
     # Print speeds
     t = tuple(x / seen * 1E3 for x in dt)  # speeds per image
     if not training:
-        shape = (batch_size, 3, imgsz, imgsz)
+        shape = (batch_size, 5, imgsz, imgsz)
         LOGGER.info(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms NMS per image at shape {shape}' % t)
 
     # Plots

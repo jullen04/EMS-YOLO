@@ -492,8 +492,8 @@ def parse_opt(known=False):
     parser.add_argument('--artifact_alias', type=str, default='latest', help='W&B: Version of dataset artifact to use')
 
     parser.add_argument('-T', default=5, type=int, help='simulating time-steps')
-    parser.add_argument('-sample_size', default=250000, type=int, help='duration of a sample in µs')
-    parser.add_argument('-image_shape', default=(240,304), type=tuple, help='spatial resolution of events')
+    parser.add_argument('-sample_size', default=50000, type=int, help='duration of a sample in µs')
+    parser.add_argument('-image_shape', default=(480,640), type=tuple, help='spatial resolution of events')
 
 
 

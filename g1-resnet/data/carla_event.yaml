@@ -1,0 +1,9 @@
+
+path: /home/da150x141//dataset_format_new_0.15_final/
+train: train.txt
+val: val.txt
+test: /home/da150x141//dataset_format_new_0.15_final/test.txt
+
+# Klasskonfiguration
+nc: 1  
+names: ['TrafficLight']  

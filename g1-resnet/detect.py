@@ -94,8 +94,9 @@ def run(weights=ROOT / 'yolov3.pt',  # model.pt path(s)
     image_shape=(320,320)
     batch_size=1
     single_cls=False
+    path = source
     #task = task if task in ('train', 'val', 'test') else 'val'  # path to train/val/test images
-    dataset = create_dataloader('path',250000,5,image_shape,task,batch_size, stride, single_cls, pad=pad, rect=pt,
+    dataset = create_dataloader(path ,250000,5,image_shape,task,batch_size, stride, single_cls, pad=pad, rect=pt,
                                        prefix=colorstr(f'{task}: '))[0]
     bs = 1  # batch_size
 
