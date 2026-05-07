@@ -21,6 +21,12 @@ The original EMS-YOLO codebase was modified to:
 
 ---
 
+## To run their train train_g1.py but with data from carla 
+```bash 
+nohup python train_g1.py --data carla_event.yaml --epochs 20 --batch-size 1 --imgsz 640 -sample_size 25000 &
+```
+
+
 ## What was added to the original repo
 
 | File                         | Description                                                                                                                                                                                        |
